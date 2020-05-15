@@ -18,7 +18,7 @@ var file = document.getElementById('my-file');
             
             file.onchange = function() {
     if(this.files[].size > 7200){
-       alert("File is too big!");
+       window.alert("File is too big!");
        this.value = "";
     };
 };
