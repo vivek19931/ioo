@@ -12,7 +12,7 @@ app.get('/', function (req, res) {
 });  
 
 server = http.Server(app); 
-server.listen(5000);  
+server.listen(8080);  
 io = socketIO(server);  
 io.on('connection', function (socket) { 
     var readStream = fs.createReadStream(path.resolve(__dirname, './woodchuck.jpg'), { encoding: 'binary'     }), chunks = []; 
