@@ -35,7 +35,7 @@ reader.readAsArrayBuffer(firstFile);
         });
 
 socket.on('image-uploaded', function (message) {
-varimg = document.createElement('img');
+var img = document.createElement('img');
 img.setAttribute('src', message.name);
 img.setAttribute('height', '100px');
 document.body.appendChild(img);
