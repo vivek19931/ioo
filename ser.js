@@ -1,32 +1,39 @@
-var express = require('express'), 
-    app = express(), 
-    http = require('http'), 
-    socketIO = require('socket.io'), 
-    fs = require('fs'), 
-    path = require('path'), 
-    server, 
-    io; 
 
-app.get('/', function (req, res) { 
- res.sendFile(__dirname + '/index.html'); 
-});  
+var express = require('express'),
+app = express(),
+http = require('http'),
+socketIO = require('socket.io'),
+fs = require('fs'),
+path = require('path'),
+server, io;
 
-server = http.Server(app); 
-server.listen(8080);  
-io = socketIO(server);  
-io.on('connection', function (socket) { 
-    var readStream = fs.createReadStream(path.resolve(__dirname, './woodchuck.jpg'), { encoding: 'binary'     }), chunks = []; 
+app.use(express.static(__dirname));
 
-    readStream.on('readable', function () { 
-    	console.log('Image loading');     
-    });  
+server = http.Server(app);
+server.listen(8080);
 
-    readStream.on('data', function (chunk) { 
-    	chunks.push(chunk); 
-    	socket.emit('img-chunk', chunk);     
-    });  
+console.log('Listening on port 8080');
 
-    readStream.on('end', function () { 
-    	console.log('Image loaded');     
-    }); 
+io = socketIO(server);
+
+io.on('connection', function (socket) {
+socket.on('upload-image', function (message) {
+
+var writer = fs.createWriteStream(path.resolve(__dirname, './tmp/' + message.name), {
+encoding: 'base64'
+        });
+
+
+writer.write(message.data);
+writer.end();
+
+writer.on('finish', function () {
+
+socket.emit('image-uploaded', {
+name: '/tmp/' + message.name
+            });
+
+        });
+
+    });
 });
